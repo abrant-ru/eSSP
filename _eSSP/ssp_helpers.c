@@ -10,6 +10,7 @@
 static SSP_RESPONSE_ENUM _ssp_return_values(SSP_COMMAND * sspC)
 {
     //CHECK FOR TIMEOUT
+    memset(sspC->ResponseData, 0, 255);
     if (send_ssp_command(sspC) == 0)
         return SSP_RESPONSE_TIMEOUT;
         
@@ -34,8 +35,7 @@ SSP_RESPONSE_ENUM ssp6_payout(SSP_COMMAND *sspC, const int value, const char *cc
 		sspC->CommandData[i+1] = value >> (i*8);
 		
 	for (i=0; i<3; i++)
-		sspC->CommandData[i+5] = cc[i];
-    
+		sspC->CommandData[i+5] = cc[i];  
     
     sspC->CommandData[8] = option;
     
@@ -71,7 +71,6 @@ SSP_RESPONSE_ENUM ssp6_set_route(SSP_COMMAND *sspC, const int value, const char 
     sspC->CommandDataLength = 9;
     sspC->CommandData[0] = SSP_CMD_SET_ROUTING;
     sspC->CommandData[1] = route;
-
  
 	for (i=0; i<4; i++)
 		sspC->CommandData[i+2] = value >> (i*8);
@@ -81,6 +80,23 @@ SSP_RESPONSE_ENUM ssp6_set_route(SSP_COMMAND *sspC, const int value, const char 
     
     resp = _ssp_return_values(sspC);
     return resp;
+}
+
+SSP_RESPONSE_ENUM ssp6_get_routing(SSP_COMMAND *sspC, const unsigned int value, const char *cc)
+{
+    SSP_RESPONSE_ENUM resp;
+    unsigned char i;
+
+    sspC->CommandDataLength = 8;
+    sspC->CommandData[0] = SSP_CMD_GET_ROUTING;
+    
+    for (i = 0; i < 4; ++i)
+        sspC->CommandData[i+1] = ((value >> (8*i))& 0xFF);
+
+	for (i=0; i<3; i++)
+		sspC->CommandData[i+5] = cc[i];
+        
+    resp = _ssp_return_values(sspC);
 }
 
 // Send an SSP sync (0x11)
@@ -135,7 +151,6 @@ SSP_RESPONSE_ENUM ssp6_setup_request(SSP_COMMAND *sspC, SSP6_SETUP_REQUEST_DATA 
         // SSP unit type
         setup_request_data->UnitType = sspC->ResponseData[offset++];
         
-        
         if (setup_request_data->UnitType == 0x03) {
         	// If the unit is a SMART Hopper
         	
@@ -167,7 +182,6 @@ SSP_RESPONSE_ENUM ssp6_setup_request(SSP_COMMAND *sspC, SSP6_SETUP_REQUEST_DATA 
                 setup_request_data->ChannelData[i].cc[j] = '\0'; // NULL TERMINATOR
             }
             
-            
         } else {
 
           	// Extract the firmware version
@@ -177,7 +191,8 @@ SSP_RESPONSE_ENUM ssp6_setup_request(SSP_COMMAND *sspC, SSP6_SETUP_REQUEST_DATA 
 
 			// Country Code field is obsolete in SSPv6
             offset += 3;
-  			// Value multiplier field is obsolete in SSPv6
+  			
+            // Value multiplier field is obsolete in SSPv6
             offset += 3;
             
             // Extract the number of channels
@@ -230,6 +245,7 @@ SSP_RESPONSE_ENUM ssp6_enable(SSP_COMMAND *sspC)
     resp = _ssp_return_values(sspC);
     return resp;
 }
+
 // send a reject command
 SSP_RESPONSE_ENUM ssp6_reject(SSP_COMMAND *sspC)
 {
@@ -240,6 +256,7 @@ SSP_RESPONSE_ENUM ssp6_reject(SSP_COMMAND *sspC)
     resp = _ssp_return_values(sspC);
     return resp;
 }
+
 // send an enable payout command
 SSP_RESPONSE_ENUM ssp6_enable_payout(SSP_COMMAND *sspC, const char type)
 {
@@ -256,6 +273,7 @@ SSP_RESPONSE_ENUM ssp6_enable_payout(SSP_COMMAND *sspC, const char type)
     resp = _ssp_return_values(sspC);
     return resp;
 }
+
 // send an empty command 
 SSP_RESPONSE_ENUM ssp6_empty(SSP_COMMAND *sspC, const char type)
 {
@@ -291,7 +309,7 @@ SSP_RESPONSE_ENUM ssp6_poll(SSP_COMMAND *sspC, SSP_POLL_DATA6 *poll_response)
 {
     SSP_RESPONSE_ENUM resp;
     unsigned char i,j;
-    
+
 	// send the poll command
     sspC->CommandDataLength = 1;
     sspC->CommandData[0] = SSP_CMD_POLL;
@@ -351,12 +369,12 @@ SSP_RESPONSE_ENUM ssp6_poll(SSP_COMMAND *sspC, SSP_POLL_DATA6 *poll_response)
                         for (k = 0; k < 4; ++k)
                         {
                             i++; //move through the 4 bytes of data
-                            poll_response->events[poll_response->event_count].data1 += (((unsigned long)sspC->ResponseData[i]) << (8*i));
+                            poll_response->events[poll_response->event_count].data1 += (((unsigned long)sspC->ResponseData[i]) << (8*k));
                         }
-                        for (k = 0; k < 4; ++k)
+                        for (k = 0; k < 3; ++k)
                         {
                             i++; //move through the 3 bytes of country code
-                            poll_response->events[poll_response->event_count].cc[k] += sspC->ResponseData[i];
+                            poll_response->events[poll_response->event_count].cc[k] = sspC->ResponseData[i];
                         }
                         
                         if (j != countries-1) // the last time through event_count will be updated elsewhere.
@@ -504,3 +522,41 @@ SSP_RESPONSE_ENUM ssp6_set_coinmech_inhibits(SSP_COMMAND *sspC, unsigned int val
     return resp;
 }
 
+SSP_RESPONSE_ENUM ssp6_configure_bezel(SSP_COMMAND *sspC, const unsigned char red, const unsigned char green, const unsigned char blue, const unsigned char vol)
+{
+    SSP_RESPONSE_ENUM resp;
+    unsigned char i;
+
+    sspC->CommandDataLength = 5;
+    sspC->CommandData[0] = SSP_CMD_CONFIGURE_BEZEL;
+    sspC->CommandData[1] = red;
+    sspC->CommandData[2] = green;
+    sspC->CommandData[3] = blue;
+    sspC->CommandData[4] = vol;
+    
+    resp = _ssp_return_values(sspC);
+    return resp;
+}
+
+SSP_RESPONSE_ENUM ssp6_float_hopper(SSP_COMMAND *sspC, const unsigned long value, const unsigned long minimum_payout, const char *cc, const unsigned char test)
+{
+    SSP_RESPONSE_ENUM resp;
+    unsigned char i;
+
+    sspC->CommandDataLength = 11;
+    sspC->CommandData[0] = SSP_CMD_FLOAT;
+
+    for (i = 0; i < 2; ++i)
+        sspC->CommandData[1+i] = ((minimum_payout >> (8*i)) & 0xFF);
+    
+    for (i = 0; i < 4; ++i)
+        sspC->CommandData[3+i] = ((value >> (8*i)) & 0xFF);
+    
+    for (i = 0; i < 3; i++)
+    	sspC->CommandData[7+i] = cc[i];
+
+   	sspC->CommandData[10] = test ? 0x19 : 0x58;
+
+    resp = _ssp_return_values(sspC);
+    return resp;
+}

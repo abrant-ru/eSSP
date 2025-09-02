@@ -1,11 +1,9 @@
 
 #include "port_linux.h"
-
 #include <termios.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/time.h>
-
 
 static int open_port = 0;
 
@@ -44,26 +42,26 @@ int kbhit (void)
 
   select(STDIN_FILENO+1, &rdfs, NULL, NULL, &tv);
   return FD_ISSET(STDIN_FILENO, &rdfs);
-
 }
 
-
-
-int open_ssp_port (const char *port) {
+int open_ssp_port (const char *port) 
+{
 	open_port = OpenSSPPort(port);
 	return (open_port != -1);
 }
 
-void close_ssp_port () {
+void close_ssp_port () 
+{
 	CloseSSPPort(open_port);
 }
 
-int send_ssp_command(SSP_COMMAND *sspC) {
-
+int send_ssp_command(SSP_COMMAND *sspC) 
+{
 	return SSPSendCommand(open_port, sspC);
 }
 
-int negotiate_ssp_encryption(SSP_COMMAND *sspC, SSP_FULL_KEY * hostKey){
+int negotiate_ssp_encryption(SSP_COMMAND *sspC, SSP_FULL_KEY * hostKey)
+{
 	return NegotiateSSPEncryption(open_port, sspC->SSPAddress, hostKey);
 }
 

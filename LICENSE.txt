@@ -1,5 +1,3 @@
-Copyright 2020 Loan
-
 Some of the C code is provided with the SDK of Innovative Technology.
 
                     GNU AFFERO GENERAL PUBLIC LICENSE

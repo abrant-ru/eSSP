@@ -62,7 +62,6 @@ SSP_RESPONSE_ENUM ssp_host_protocol(SSP_COMMAND_SETUP setup,const unsigned char 
     return resp;
 }
 
-
 SSP_RESPONSE_ENUM ssp_poll(SSP_COMMAND_SETUP setup,SSP_POLL_DATA * poll_response)
 {
     SSP_COMMAND sspC;
@@ -158,7 +157,6 @@ SSP_RESPONSE_ENUM ssp_disable(SSP_COMMAND_SETUP setup)
     return resp;
 }
 
-
 SSP_RESPONSE_ENUM ssp_enable(SSP_COMMAND_SETUP setup)
 {
     SSP_COMMAND sspC;
@@ -238,8 +236,6 @@ SSP_RESPONSE_ENUM ssp_enable_higher_protocol_events(SSP_COMMAND_SETUP setup)
     return resp;
 }
 
-
-
 SSP_RESPONSE_ENUM ssp_unit_data(SSP_COMMAND_SETUP setup, SSP_UNIT_DATA * sud)
 {
     SSP_COMMAND sspC;
@@ -269,7 +265,6 @@ SSP_RESPONSE_ENUM ssp_unit_data(SSP_COMMAND_SETUP setup, SSP_UNIT_DATA * sud)
     }
     return resp;
 }
-
 
 SSP_RESPONSE_ENUM ssp_channel_value_data(SSP_COMMAND_SETUP setup, SSP_CHANNEL_DATA * scd)
 {
@@ -368,7 +363,6 @@ SSP_RESPONSE_ENUM ssp_setup_request(SSP_COMMAND_SETUP setup, SSP_SETUP_REQUEST_D
     return resp;
 }
 
-
 SSP_RESPONSE_ENUM ssp_payout_amount(SSP_COMMAND_SETUP setup, const unsigned long amount)
 {
     SSP_COMMAND sspC;
@@ -382,7 +376,6 @@ SSP_RESPONSE_ENUM ssp_payout_amount(SSP_COMMAND_SETUP setup, const unsigned long
     resp = _ssp_return_values(setup.port, &sspC);
     return resp;
 }
-
 
 SSP_RESPONSE_ENUM ssp_set_coin_amount(SSP_COMMAND_SETUP setup, const unsigned long value, const unsigned short amount)
 {
@@ -399,7 +392,6 @@ SSP_RESPONSE_ENUM ssp_set_coin_amount(SSP_COMMAND_SETUP setup, const unsigned lo
     resp = _ssp_return_values(setup.port, &sspC);
     return resp;
 }
-
 
 SSP_RESPONSE_ENUM ssp_get_coin_amount(SSP_COMMAND_SETUP setup, const unsigned long value, unsigned short * amount)
 {
@@ -429,7 +421,7 @@ SSP_RESPONSE_ENUM ssp_halt_payout(SSP_COMMAND_SETUP setup)
     return resp;
 }
 
-SSP_RESPONSE_ENUM ssp_set_routing(SSP_COMMAND_SETUP setup,const unsigned long value, const unsigned char route)
+SSP_RESPONSE_ENUM ssp_set_routing(SSP_COMMAND_SETUP setup, const unsigned long value, const unsigned char route)
 {
     SSP_COMMAND sspC;
     SSP_RESPONSE_ENUM resp;
@@ -444,14 +436,14 @@ SSP_RESPONSE_ENUM ssp_set_routing(SSP_COMMAND_SETUP setup,const unsigned long va
     return resp;
 }
 
-SSP_RESPONSE_ENUM ssp_get_routing(SSP_COMMAND_SETUP setup,const unsigned long value,  unsigned char * route)
+SSP_RESPONSE_ENUM ssp_get_routing(SSP_COMMAND_SETUP setup, const unsigned long value, unsigned char * route)
 {
     SSP_COMMAND sspC;
     SSP_RESPONSE_ENUM resp;
     unsigned char i;
     _ssp_setup_command_structure(&setup,&sspC);
     sspC.CommandDataLength = 5;
-    sspC.CommandData[0] = SSP_CMD_SET_ROUTING;
+    sspC.CommandData[0] = SSP_CMD_GET_ROUTING;
     for (i = 0; i < 4; ++i)
         sspC.CommandData[i+1] = ((value >> (8*i))& 0xFF);
     resp = _ssp_return_values(setup.port, &sspC);
@@ -461,14 +453,14 @@ SSP_RESPONSE_ENUM ssp_get_routing(SSP_COMMAND_SETUP setup,const unsigned long va
     return resp;
 }
 
-SSP_RESPONSE_ENUM ssp_float_hopper(SSP_COMMAND_SETUP setup,const unsigned long value,  const unsigned long minimum_payout)
+SSP_RESPONSE_ENUM ssp_float_hopper(SSP_COMMAND_SETUP setup, const unsigned long value, const unsigned long minimum_payout)
 {
     SSP_COMMAND sspC;
     SSP_RESPONSE_ENUM resp;
     unsigned char i;
     _ssp_setup_command_structure(&setup,&sspC);
     sspC.CommandDataLength = 5;
-    sspC.CommandData[0] = SSP_CMD_SET_ROUTING;
+    sspC.CommandData[0] = SSP_CMD_FLOAT;
     for (i = 0; i < 2; ++i)
         sspC.CommandData[i+1] = ((minimum_payout >> (8*i))& 0xFF);
     for (i = 0; i < 4; ++i)

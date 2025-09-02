@@ -16,8 +16,6 @@
 #define SSP_CMD_STACK_NOTE 0x43
 #define SSP_CMD_PAYOUT_VALUE 0x33
 
-
-
 #define SSP_POLL_CALIBRATION_FAIL 0x83
 #define SSP_POLL_SMART_EMPTYING 0xB3
 #define SSP_POLL_SMART_EMPTIED 0xB4
@@ -32,11 +30,8 @@
 #define SSP_POLL_CASHBOX_PAID 0xDE
 #define SSP_POLL_COIN_CREDIT 0xDF
 
-
 #define SSP6_OPTION_BYTE_TEST 	0x19
 #define SSP6_OPTION_BYTE_DO		0x58
-
-
 
 #define PRINT_CMD(_sspC) do { 						\
 	int _i; 										\
@@ -81,7 +76,7 @@ typedef struct {
     SSP6_CHANNEL_DATA ChannelData[20];
     unsigned long RealValueMultiplier;
     unsigned char ProtocolVersion;
-}SSP6_SETUP_REQUEST_DATA;
+ } SSP6_SETUP_REQUEST_DATA;
 
 enum calibration_failures {
     NO_FAILUE=0x00,
@@ -99,9 +94,9 @@ enum channel_state {
     ENABLED=0x01
 };
 
-
 SSP_RESPONSE_ENUM ssp6_payout(SSP_COMMAND *sspC, const int value, const char *cc, const char option);
 SSP_RESPONSE_ENUM ssp6_set_route(SSP_COMMAND *sspC, const int value, const char *cc, const char route);
+SSP_RESPONSE_ENUM ssp6_get_routing(SSP_COMMAND *sspC, const unsigned int value, const char *cc);
 SSP_RESPONSE_ENUM ssp6_sync(SSP_COMMAND *sspC);
 SSP_RESPONSE_ENUM ssp6_setup_encryption(SSP_COMMAND *sspC,const unsigned long long fixedkey);
 SSP_RESPONSE_ENUM ssp6_host_protocol(SSP_COMMAND *sspC,const unsigned char host_protocol);
@@ -117,5 +112,7 @@ SSP_RESPONSE_ENUM ssp6_stack_note(SSP_COMMAND *sspC);
 SSP_RESPONSE_ENUM ssp6_payout_note(SSP_COMMAND *sspC);
 SSP_RESPONSE_ENUM ssp6_run_calibration(SSP_COMMAND *sspC);
 SSP_RESPONSE_ENUM ssp6_set_coinmech_inhibits(SSP_COMMAND *sspC, unsigned int value, const char *cc, enum channel_state state);
+SSP_RESPONSE_ENUM ssp6_configure_bezel(SSP_COMMAND *sspC, const unsigned char red, const unsigned char green, const unsigned char blue, const unsigned char vol);
+SSP_RESPONSE_ENUM ssp6_float_hopper(SSP_COMMAND *sspC, const unsigned long value, const unsigned long minimum_payout, const char *cc, const unsigned char test);
 
 #endif

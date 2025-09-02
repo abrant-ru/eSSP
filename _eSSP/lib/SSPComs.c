@@ -7,14 +7,11 @@
 #include "serialfunc.h"
 #include "ITLSSPProc.h"
 
-
-
 extern unsigned int encPktCount[MAX_SSP_PORT];
 extern unsigned char sspSeq[MAX_SSP_PORT];
 
 int CompileSSPCommand(SSP_COMMAND* cmd,SSP_TX_RX_PACKET* ss)
 {
-
 	int i,j;
 	unsigned short crc;
 	unsigned char tBuffer[255];
@@ -23,23 +20,14 @@ int CompileSSPCommand(SSP_COMMAND* cmd,SSP_TX_RX_PACKET* ss)
 	for(i = 0; i < 255; i++)
 		ss->rxData[i] = 0x00;
 
-
-
-
-
-
 	/* for sync commands reset the deq bit   */
 	if(cmd->CommandData[0] == SSP_CMD_SYNC)
 		sspSeq[cmd->SSPAddress] = 0x80;
 
-
-
 	/* is this a encrypted packet  */
 	if(cmd->EncryptionStatus){
-
 		if(!EncryptSSPPacket(cmd->SSPAddress ,cmd->CommandData,cmd->CommandData,&cmd->CommandDataLength,&cmd->CommandDataLength,(unsigned long long*)&cmd->Key))
 			return 0;
-
 	}
 
 	/* create the packet from this data   */
@@ -58,7 +46,6 @@ int CompileSSPCommand(SSP_COMMAND* cmd,SSP_TX_RX_PACKET* ss)
 	crc = cal_crc_loop_CCITT_A(ss->txBufferLength - 3,&ss->txData[1] ,CRC_SSP_SEED,CRC_SSP_POLY);
 	ss->txData[3 + cmd->CommandDataLength] = (unsigned char)(crc & 0xFF);
 	ss->txData[4 + cmd->CommandDataLength] = (unsigned char)((crc >> 8) & 0xFF);
-
 
 	/* we now need to 'byte stuff' this buffered data   */
 	j = 0;
@@ -141,15 +128,12 @@ int  SSPSendCommand(const SSP_PORT port, SSP_COMMAND* cmd)
         retry--;
     }while(retry > 0);
 
-
     rxTime = GetClockMs();
 
     if(cmd->ResponseStatus == SSP_CMD_TIMEOUT){
             cmd->ResponseData[0] = SSP_RESPONSE_TIMEOUT;
             return 0;
     }
-
-
 
     /* load the command structure with ssp packet data   */
     if(ssp.rxData[3] == SSP_STEX){   /* check for encrpted packet    */
@@ -187,8 +171,6 @@ int  SSPSendCommand(const SSP_PORT port, SSP_COMMAND* cmd)
         /* for decrypted resonse with encrypted command, increment the counter here  */
     //	if(!cmd->EncryptionStatus)
           //encPktCount[cmd->SSPAddress]++;
-
-
     }
 
     /*for(i = 0; i < ssp.rxBufferLength; i++)
@@ -197,7 +179,6 @@ int  SSPSendCommand(const SSP_PORT port, SSP_COMMAND* cmd)
     cmd->ResponseDataLength = ssp.rxData[2];
     for(i = 0; i < cmd->ResponseDataLength; i++)
         cmd->ResponseData[i] = ssp.rxData[i + 3];
-
 
     /* alternate the seq bit   */
     if(sspSeq[cmd->SSPAddress] == 0x80)
@@ -221,7 +202,6 @@ clock_t GetClockMs()
     test += (tv.tv_usec)/1000;
     return test;
 }
-
 
 void SSPDataIn(unsigned char RxChar, SSP_TX_RX_PACKET* ss)
 {
@@ -269,6 +249,4 @@ void SSPDataIn(unsigned char RxChar, SSP_TX_RX_PACKET* ss)
 			ss->CheckStuff = 0;
 		}
 	}
-
-
 }

@@ -1,9 +1,7 @@
 #ifndef __SSP_DEFINES_H
 #define __SSP_DEFINES_H
 
-
 #define SSP_STX 0x7F
-
 
 //Standard BNV SSP Commands
 #define SSP_CMD_RESET 0x1
@@ -45,6 +43,7 @@
 #define SSP_CMD_HOST_SERIAL 0x14
 #define SSP_CMD_ENABLE_PAYOUT_DEVICE 0x5C
 #define SSP_CMD_DISABLE_PAYOUT_DEVICE 0x5B
+#define SSP_CMD_CONFIGURE_BEZEL 0x54
 
 //generic SSP Responses
 typedef enum
@@ -61,7 +60,6 @@ SSP_RESPONSE_HEADER_FAILURE = 0xF9,
 SSP_RESPONSE_KEY_NOT_SET = 0xFA,
 SSP_RESPONSE_TIMEOUT = 0xFF,
 } SSP_RESPONSE_ENUM;
-
 
 //Poll Responses
 #define SSP_POLL_RESET 0xF1
@@ -97,7 +95,6 @@ SSP_RESPONSE_TIMEOUT = 0xFF,
 #define SSP_POLL_EMPTY    0xC3
 #define SSP_POLL_COINS_LOW 0xD3
 #define SSP_POLL_COINS_EMPTY 0xD4
-
 
 //Programming Type
 #define SSP_PROGRAM_FIRMWARE 0x0

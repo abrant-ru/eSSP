@@ -4,7 +4,6 @@
 #define CCONV _stdcall
 #define NOMANGLE
 
-
 #include "itl_types.h"
 #include "ssp_defines.h"
 
@@ -12,30 +11,22 @@
  extern "C" {
 #endif
 
-
 #define MAX_SSP_PORT 200
-
 #define NO_ENCRYPTION 0
 #define ENCRYPTION_SET 1
 
-typedef struct{
+typedef struct {
 	unsigned long long FixedKey;
 	unsigned long long EncryptKey;
-}SSP_FULL_KEY;
+} SSP_FULL_KEY;
 
-
-typedef struct{
+typedef struct {
 	unsigned short packetTime;
 	unsigned char PacketLength;
 	unsigned char PacketData[255];
-}SSP_PACKET;
+} SSP_PACKET;
 
-
-
-
-
-
-typedef struct{
+typedef struct {
 	SSP_FULL_KEY Key;
 	unsigned long BaudRate;
 	unsigned long Timeout;
@@ -49,10 +40,9 @@ typedef struct{
 	unsigned char ResponseDataLength;
 	unsigned char ResponseData[255];
 	unsigned char IgnoreError;
-}SSP_COMMAND;
+} SSP_COMMAND;
 
-
-typedef struct{
+typedef struct {
 	unsigned char txData[255];
 	unsigned char txPtr;
 	unsigned char rxData[255];
@@ -62,11 +52,9 @@ typedef struct{
 	unsigned char SSPAddress;
 	unsigned char NewResponse;
 	unsigned char CheckStuff;
-}SSP_TX_RX_PACKET;
+} SSP_TX_RX_PACKET;
 
-
-
-typedef struct{
+typedef struct {
     long long Generator;
     long long Modulus;
     long long HostInter;
@@ -75,22 +63,17 @@ typedef struct{
     long long SlaveRandom;
     long long KeyHost;
     long long KeySlave;
-}SSP_KEYS;
-
-
-
-
-
+} SSP_KEYS;
 
 /* command status enumeration */
-typedef enum{
+typedef enum {
 	PORT_CLOSED,
 	PORT_OPEN,
 	PORT_ERROR,
 	SSP_REPLY_OK,
 	SSP_PACKET_ERROR,
 	SSP_CMD_TIMEOUT,
-}PORT_STATUS;
+} PORT_STATUS;
 
 typedef struct {
 	SSP_FULL_KEY Key;
@@ -99,7 +82,7 @@ typedef struct {
 	unsigned char RetryLevel;
 	unsigned char EncryptionStatus;
 	SSP_PORT port;
-}SSP_COMMAND_SETUP;
+} SSP_COMMAND_SETUP;
 
 typedef struct {
     unsigned char event;
@@ -111,18 +94,18 @@ typedef struct {
     unsigned char event_count;
 } SSP_POLL_DATA;
 
-typedef struct{
+typedef struct {
     unsigned char UnitType;
     char FirmwareVersion[5];
     char CountryCode[4];
     unsigned long ValueMultiplier;
     unsigned char ProtocolVersion;
-}SSP_UNIT_DATA;
+} SSP_UNIT_DATA;
 
-typedef struct{
+typedef struct {
     unsigned char NumberOfChannels;
     unsigned char ChannelData[16];
-}SSP_CHANNEL_DATA;
+} SSP_CHANNEL_DATA;
 
 typedef struct {
     unsigned char UnitType;
@@ -133,9 +116,14 @@ typedef struct {
     SSP_CHANNEL_DATA ChannelSecurity;
     unsigned long RealValueMultiplier;
     unsigned char ProtocolVersion;
-}SSP_SETUP_REQUEST_DATA;
+} SSP_SETUP_REQUEST_DATA;
 
-
+typedef struct {
+    unsigned char Red;
+    unsigned char Green;
+    unsigned char Blue;
+    unsigned char Volatile;
+} SSP_CONFIGURE_BEZEL;
 
 /*
 Name: SSPSendCommand
@@ -162,8 +150,6 @@ Notes:
 */
 SSP_PORT OpenSSPPort(const char * port);
 
-
-
 /*
 Name: CloseSSPPort
 Inputs:
@@ -173,9 +159,6 @@ Return:
 Notes:
 */
 void CloseSSPPort(const SSP_PORT port);
-
-
-
 
 /*
 Name: DownloadFileToTarget
@@ -260,7 +243,6 @@ Return:
     DOWNLOAD_NOT_ALLOWED			0x100015
     HI_TRANSFER_SPEED_FAIL			0x100016
 Notes:
-
 */
 unsigned long GetDownloadStatus(void);
 
@@ -277,7 +259,6 @@ Notes:
     Only the EncryptKey iin SSP_FULL_KEY will be set. The FixedKey needs to be set by the user
 */
 int NegotiateSSPEncryption(SSP_PORT port, const char ssp_address, SSP_FULL_KEY * key);
-
 
 //SSP functions
 /*
